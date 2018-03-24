@@ -600,10 +600,20 @@ const char *esr_get_class_string(u32 esr)
  */
 asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr)
 {
+#ifdef CONFIG_RKP
+	u64 hint = 0;
+#endif
 	console_verbose();
 
+#ifndef CONFIG_RKP
 	pr_crit("Bad mode in %s handler detected, code 0x%08x -- %s\n",
 		handler[reason], esr, esr_get_class_string(esr));
+#else
+	rkp_call(MOAB_PONG, (u64)&hint, 0, 0, 0, 0);
+	pr_crit("Bad mode in %s handler detected, code 0x%08x -- %s %llx\n",
+		handler[reason], esr, esr_get_class_string(esr), hint);
+	__show_regs(regs);
+#endif
 
 	die("Oops - bad mode", regs, 0);
 	local_irq_disable();
