@@ -608,12 +608,6 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr)
 #ifndef CONFIG_RKP
 	pr_crit("Bad mode in %s handler detected, code 0x%08x -- %s\n",
 		handler[reason], esr, esr_get_class_string(esr));
-#else
-	rkp_call(MOAB_PONG, (u64)&hint, 0, 0, 0, 0);
-	pr_crit("Bad mode in %s handler detected, code 0x%08x -- %s %llx\n",
-		handler[reason], esr, esr_get_class_string(esr), hint);
-	__show_regs(regs);
-#endif
 
 	die("Oops - bad mode", regs, 0);
 	local_irq_disable();
@@ -633,6 +627,12 @@ asmlinkage void bad_el0_sync(struct pt_regs *regs, int reason, unsigned int esr)
 	pr_crit("Bad EL0 synchronous exception detected on CPU%d, code 0x%08x -- %s\n",
 		smp_processor_id(), esr, esr_get_class_string(esr));
 	__show_regs(regs);
+#else
+	rkp_call(MOAB_PONG, (u64)&hint, 0, 0, 0, 0);
+	pr_crit("Bad mode in %s handler detected, code 0x%08x -- %s %llx\n",
+		handler[reason], esr, esr_get_class_string(esr), hint);
+	__show_regs(regs);
+#endif
 
 #ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 	if (!user_mode(regs)) {
