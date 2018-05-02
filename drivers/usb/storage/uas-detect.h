@@ -11,6 +11,7 @@ static int uas_is_interface(struct usb_host_interface *intf)
 
 static struct usb_host_interface *uas_find_uas_alt_setting(
 		struct usb_interface *intf)
+
 {
 	int i;
 
