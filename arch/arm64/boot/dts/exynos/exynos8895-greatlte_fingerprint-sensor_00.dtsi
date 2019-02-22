@@ -33,27 +33,11 @@
 		};
 	};
 
-	pinctrl@104D0000 {
-		btp_reset: btp-reset {
-			samsung,pins = "gpe7-6";
-			samsung,pin-function = <1>;
-			samsung,pin-pud = <0>;
-			samsung,pin-drv = <0>;
-		};
-	};
 	pinctrl@11430000 {
 		btp_ldo: btp-ldo {
 			samsung,pins = "gpj1-6";
 			samsung,pin-function = <1>;
 			samsung,pin-pud = <1>;
-			samsung,pin-drv = <0>;
-		};
-	};
-	pinctrl@104D0000 {
-		btp_id: btp-id {
-			samsung,pins = "gpf1-4";
-			samsung,pin-function = <0>;
-			samsung,pin-pud = <0>;
 			samsung,pin-drv = <0>;
 		};
 	};
@@ -74,7 +58,7 @@
 			reg = <0>;
 			spi-max-frequency = <13000000>;
 			pinctrl-names = "default", "sleep", "idle";
-			pinctrl-0 = <&btp_irq &btp_reset &btp_id &btp_ldo>;
+			pinctrl-0 = <&btp_irq &btp_ldo>;
 			pinctrl-1 = <&btp_irqsleep>;
 			pinctrl-2 = <&btp_irqidle>;
 
@@ -82,10 +66,8 @@
 			#gpio-cells = <2>;
 
 			vfsspi-drdyPin = <&gpa1 3 0x00>;
-			vfsspi-sleepPin = <&gpe7 6 0x00>;
 			vfsspi-ldoPin = <&gpj1 6 0x00>;
-			vfsspi-vendorPin = <&gpf1 4 0x00>;
-			vfsspi-orient = <0>;
+			vfsspi-orient = <1>;
 			vfsspi-wog = <1>;
 			vfsspi-chipid = "NAMSAN";
 			vfsspi-csgpio = <&gpd1 2 0>;

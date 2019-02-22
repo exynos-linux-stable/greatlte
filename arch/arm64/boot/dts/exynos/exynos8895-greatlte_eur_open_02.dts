@@ -10,23 +10,23 @@
 */
 
 /dts-v1/;
-#include "exynos8895-dream2lte_common.dtsi"
-#include "battery_data_dream2lte_eur_09.dtsi"
-#include "exynos8895-dream2lte_motor.dtsi"
-#include "exynos8895-dream2lte_svcled.dtsi"
-#include "ccic-s2mm005_01.dtsi"
-#include "exynos8895-dreamlte_mst_00.dtsi"
-#include "exynos8895-dream2lte_gpio_10.dtsi"
-#include "exynos8895-dreamlte_fingerprint-sensor_10.dtsi"
+#include "exynos8895-greatlte_common.dtsi"
+#include "battery_data_greatlte_eur_00.dtsi"
+#include "exynos8895-greatlte_motor.dtsi"
+#include "exynos8895-greatlte_svcled.dtsi"
+#include "ccic-s2mm005_great_00.dtsi"
+#include "exynos8895-greatlte_mst_00.dtsi"
+#include "exynos8895-greatlte_gpio_01.dtsi"
+#include "exynos8895-greatlte_fingerprint-sensor_00.dtsi"
 
 / {
-	model = "Samsung SM-G955F rev05 board based on EXYNOS8895";
+	model = "Samsung SM-N950F board based on EXYNOS8895";
 	model_info-chip = <8895>;
 	model_info-platform = "android";
 	model_info-subtype = "samsung";
-	model_info-hw_rev = <10>;
-	model_info-hw_rev_end = <255>;
-	compatible = "samsung, SM-G955F rev05", "samsung,EXYNOS8895";
+	model_info-hw_rev = <0>;
+	model_info-hw_rev_end = <2>;
+	compatible = "samsung, SM-N950F rev01", "samsung,EXYNOS8895";
 
 	spi_3: spi@10460000 {
 		status = "okay";
@@ -60,7 +60,7 @@
 			spi-cpol;
 			spi-cpha;
 			pinctrl-names = "default";
-			pinctrl-0 = <&ssp_host_req &ssp_mcu_req &ssp_mcu_resp &ssp_batch_wake_irq &ssp_pwr_en>;
+			pinctrl-0 = <&ssp_host_req &ssp_mcu_req &ssp_mcu_resp &ssp_batch_wake_irq>;
 		
 			gpio-controller;
 			#gpio-cells = <2>;
@@ -68,7 +68,7 @@
 			ssp-mcu-req = <&gpe6 1 0x00>;
 			ssp-mcu-resp = <&gpi1 5 0x00>;
 			ssp-batch-wake-irq = <&gpa2 5 0x00>;
-			ssp-acc-position = <5>;
+			ssp-acc-position = <3>;
 			ssp-mag-position = <6>;
 			ssp-sns-combination = <0>;
 			ssp-ap-rev = <1>;
@@ -112,20 +112,21 @@
 		};
 	};
 
+	hsi2c@10900000 {
+		s2mpb02_pmic@59 {
+			regulators {
+				_buck2_reg: s2mpb02-buck2 {
+					regulator-always-on;
+					regulator-boot-on;
+				};
+			};
+		};
+	};
+
 	speedy@15B50000{
 		status = "okay";
 		s2mps17mfd@00 {
 			regulators {
-				ldo34_reg: LDO34 {
-					regulator-name = "tsp_io";
-					regulator-min-microvolt = <1850000>;
-					regulator-max-microvolt = <1850000>;
-				};
-				ldo35_reg: LDO35 {
-					regulator-name = "tsp_avdd";
-					regulator-min-microvolt = <3300000>;
-					regulator-max-microvolt = <3300000>;
-				};
 				ldo36_reg: LDO36 {
 					regulator-name = "VDD_1.8V_ESE";
 					regulator-min-microvolt = <1800000>;
@@ -140,59 +141,11 @@
 		};
 	};
 
-	sec_thermistor@2 {
-		status = "disabled";
-	};
-
-	sec_thermistor@10 {
-		compatible = "samsung,sec-pa-thermistor";
-		status = "okay";
-
-		adc_array = <327 347 367 388 410 433 456 482 507 534
-			562 591 621 651 684 717 750 786 821 858
-			896 935 975 1016 1057 1100 1143 1187 1231 1277
-			1323 1369 1416 1463 1511 1559 1608 1657 1706 1755
-			1804 1853 1902 1951 2000 2048 2096 2144 2192 2239
-			2285 2332 2378 2421 2467 2510 2553 2596 2637 2678
-			2719 2758 2797 2833 2872 2906 2942 2976 3011 3042
-			3074 3106 3136 3165 3195 3222 3249 3277 3302 3327
-			3352 3375 3397 3420 3441 3461 3482 3502 3520 3538
-			3557 3573 3591 3607 3620 3636 3650 3666 3680 3691
-			3705 3716 3730 3741 3752 3761 3773 3782 3793 3802
-			3812>;
-
-		temp_array =
-			<(-200) (-190) (-180) (-170) (-160) (-150) (-140) (-130) (-120) (-110)
-			(-100) (-90) (-80) (-70) (-60) (-50) (-40) (-30) (-20) (-10)
-			0 10 20 30 40 50 60 70 80 90
-			100 110 120 130 140 150 160 170 180 190
-			200 210 220 230 240 250 260 270 280 290
-			300 310 320 330 340 350 360 370 380 390
-			400 410 420 430 440 450 460 470 480 490
-			500 510 520 530 540 550 560 570 580 590
-			600 610 620 630 640 650 660 670 680 690
-			700 710 720 730 740 750 760 770 780 790
-			800 810 820 830 840 850 860 870 880 890
-			900>;
-
-		io-channels = <&exynos_adc 10>;
-		io-channel-names = "adc-pa-temp";
-		io-channel-ranges;
-	};
-
-	hsi2c_23: hsi2c@108E0000 {
-		touchscreen@49 {
-			status = "okay";
-			stm,firmware_name = "tsp_stm/fts8cd56_dream2.fw", "tsp_stm/fts8cd56_dream2.fw";
-			stm,afe_base = <0x9D84>;
-		};
-	};
-
 	hsi2c_26: hsi2c@10910000 {
 		status = "okay";
-		hrmsensor@64 {
+		hrmsensor@57 {
 			compatible = "hrmsensor";
-			reg = <0x64>;
+			reg = <0x57>;
 			interrupt-parent = <&gpe6>;
 			interrupts = <6 0 0>;
 			hrmsensor,hrm_int-gpio = <&gpe6 6 0>;
@@ -203,6 +156,12 @@
 			hrmsensor,vdd_1p8 = "HRM_1.8V_AP";
 			hrmsensor,led_3p3 = "HRM_3.3V_AP";
 			hrmsensor,i2c_1p8 = "VDD_NFC_1P8";
+		};
+	};
+
+	hsi2c_10: hsi2c@10490000 {
+		wacom@56 {
+			wacom,fw_path = "epen/w9018_great_1coil.fw";
 		};
 	};
 
@@ -282,7 +241,7 @@
 	};
 
 	displayport: displayport@0x11090000 {
-		dp,aux_sw_oe = <&gpi1 3 0>;
+		dp,aux_sw_oe = <&gpf1 5 0>;
 		dp,sbu_sw_sel = <&gpe7 5 0>;
 		dp,usb_con_sel = <&gpi1 7 0>;
 		/*dp,aux_vdd = "VDD_DP_1P8";*/
